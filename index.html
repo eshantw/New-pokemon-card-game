@@ -155,7 +155,7 @@
  .inspect-btn{position:absolute;top:-5px;left:-5px;background:rgba(0,0,0,.8);color:white;border-radius:50%;width:24px;height:24px;display:flex;justify-content:center;align-items:center;z-index:20;border:1px solid #fff;font-size:12px;}
  .inspect-btn:hover{transform:scale(1.2);background:#ffcb05;color:black}
  
- /* 🌟 黃色圈選處 Buff 標籤容器，自適應字級與換行 */
+ /* 🌟 Buff 標籤容器，自適應字級與換行 */
  .buff-container{position:absolute;top:4px;right:4px;display:flex;gap:3px;flex-direction:column;align-items:flex-end;z-index:5;max-width:70%;}
  .item-tag{
    background:#ffcb05;color:black;padding:2px 4px;border-radius:5px;
@@ -654,6 +654,14 @@ if(p.currHp > oldHp) window.showHeal(p.uid, p.currHp - oldHp);
  log.text += ` 💚 聖光發動！我方全體恢復 HP！`; 
 },
 
+ // 🌟 補上巨牙鯊專屬 red_hp_burst_30 紅血傷害+30
+ 'red_hp_burst_30': (attacker, defender, log, coinResult, baseDmg) => { 
+   if ((attacker.currHp / attacker.hp) < 0.3) { 
+     log.text += ` (💥紅血爆發，傷害+30！)`; 
+     return baseDmg + 30; 
+   } 
+   return baseDmg; 
+ },
  'red_hp_burst_40': (attacker, defender, log, coinResult, baseDmg) => { if ((attacker.currHp / attacker.hp) < 0.3) { log.text += ` (💥紅血爆發，傷害+40！)`; return baseDmg + 40; } return baseDmg; },
  'red_hp_burst_50': (attacker, defender, log, coinResult, baseDmg) => { if ((attacker.currHp / attacker.hp) < 0.3) { log.text += ` (💥紅血爆發，傷害+50！)`; return baseDmg + 50; } return baseDmg; },
  'red_hp_burst_60': (attacker, defender, log, coinResult, baseDmg) => { if ((attacker.currHp / attacker.hp) < 0.3) { log.text += ` (💥紅血爆發，傷害+60！)`; return baseDmg + 60; } return baseDmg; },
@@ -1047,7 +1055,6 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
    let dmg = atk.d;
    p.currHp = Math.max(0, p.currHp - dmg);
 
-   // 🌟 1. 修正：只有在真正處於超極巨化或超級進化狀態下才觸發 isUltra
    const isUltimate = (atkIdx === 1);
    const isUltra = isUltimate && (
      (attacker.dynamax && attacker.dynamax.turns > 0) ||
@@ -1067,7 +1074,12 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
    });
 
    window.addLog(`🎯 狙擊成功！對 ${p.name} 造成 ${dmg} 傷害。`);
-   if (p.currHp <= 0) { p.isDead = true; window.state.teams[teamNum].lostLives++; window.addLog(`💀 ${p.name} 氣絕！`); }
+   if (p.currHp <= 0) { 
+     p.isDead = true; 
+     window.state.teams[teamNum].lostLives++; 
+     window.addLog(`💀 ${p.name} 氣絕！`); 
+     if (window.checkGameOver()) return; // 🌟 補強：狙擊陣亡即刻判定勝負
+   }
    window.state.step = 'finished'; window.state.pendingAttack = null; window.render();
    if(window.checkGameOver()) return;
    setTimeout(window.processEndOfTurn, isUltimate ? 1500 : 1000);
@@ -1480,7 +1492,6 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  const enemyTeam = window.state.teams[enemyTeamNum];
  const defender = enemyTeam.pokemon[enemyTeam.activeIdx];
  
- // 🌟 1. 修正：只有在真正處於超極巨化或超級進化狀態下才觸發 isUltra
  const isUltimate = (atkIdx === 1);
  const isUltra = isUltimate && (
    (attacker.dynamax && attacker.dynamax.turns > 0) ||
@@ -1609,8 +1620,10 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
        }, 1000);
      }
 
+     // 🌟 AOE 波及傷害處理 (補強：擊倒立即觸發 checkGameOver)
      if (atk.special === 'aoe_10' || atk.special === 'aoe_20') {
        const aoeDmg = atk.special === 'aoe_10' ? 10 : 20;
+       let aoeKills = 0;
        enemyTeam.pokemon.forEach((p, idx) => {
          if (idx !== enemyTeam.activeIdx && p.currHp > 0) {
            p.currHp = Math.max(0, p.currHp - aoeDmg);
@@ -1620,9 +1633,18 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
              window.FX.triggerHit(pRect.left + pRect.width / 2, pRect.top + pRect.height / 2, attacker.type, aoeDmg, 'light');
              window.showDamage(p.uid, aoeDmg);
            }
-           if (p.currHp <= 0 && !p.isDead) { p.isDead = true; enemyTeam.lostLives++; log.text += ` 💀 後備 ${p.name} 氣絕！`; }
+           if (p.currHp <= 0 && !p.isDead) { 
+             p.isDead = true; 
+             enemyTeam.lostLives++; 
+             aoeKills++;
+             log.text += ` 💀 後備 ${p.name} 氣絕！`; 
+           }
          }
        });
+       if (aoeKills > 0) {
+         window.render();
+         if (window.checkGameOver()) return; // 🌟 後備陣亡達3隻直接終止比賽，防止反殺
+       }
      }
    }
  });
@@ -1846,7 +1868,6 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  
  let statusHtml = ''; if (p.status.poison) statusHtml += '<span class="status-tag status-poison">中毒</span>'; if (p.status.burn) statusHtml += '<span class="status-tag status-burn">灼傷</span>'; if (p.status.asleep) statusHtml += '<span class="status-tag status-asleep">睡眠</span>'; if (p.status.confused) statusHtml += '<span class="status-tag status-confused">混亂</span>'; if (p.status.paralyze) statusHtml += '<span class="status-tag status-paralyze">麻痺</span>'; if (p.status.immune_next) statusHtml += '<span class="status-tag status-immune">免傷</span>'; if (p.status.cant_attack > 0) statusHtml += '<span class="status-tag status-cant-act">禁攻</span>';
  
- // 🌟 2. 補齊一般畫面的受傷減免標籤，精確顯示在黃色圈選處！
  let buffHtml = ''; 
  if (p.buff.turns > 0) buffHtml += `<div class="item-tag">💪攻擊+${p.buff.dmg}</div>`; 
  if (p.status.reduce_dmg_20) buffHtml += `<div class="item-tag">🛡️受傷-20</div>`;
@@ -1889,7 +1910,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  ${p.attacks.map((atk, aIdx) => {
  const hasEnergy = window.canUseAttack(p, atk); const rowClass = (hasEnergy && isMyTurn && window.state.step === 'action') ? 'attack-ready' : 'attack-disabled';
  let costHtml = `<div style="display:flex; flex-wrap:wrap; max-width:45px; gap:2px;">${atk.cost.map(c => `<div class="energy-icon energy-${c}"></div>`).join('')}</div>`;
- return `<div class="attack-row ${rowClass}" onclick="event.stopPropagation(); window.executeAttack(event, ${t}, ${aIdx});"><div class="attack-cost">${costHtml}</div><span style="flex:1; margin-left:5px; font-weight:bold; white-space:nowrap; overflow:hidden;">${atk.n}${atk.desc ? '<span class="attack-special-icon">✨</span>' : ''}</span><span>${atk.d}</span></div>`;
+ return `<div class="attack-row ${rowClass}" onclick="event.stopPropagation(); window.executeAttack(event, ${t},${aIdx});"><div class="attack-cost">${costHtml}</div><span style="flex:1; margin-left:5px; font-weight:bold; white-space:nowrap; overflow:hidden;">${atk.n}${atk.desc ? '<span class="attack-special-icon">✨</span>' : ''}</span><span>${atk.d}</span></div>`;
  }).join('')}
  </div><div style="font-size:9px; opacity:0.8; margin-top:5px; display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:2px;"><span>弱:</span>${weakIcon}</div><div style="display:flex; align-items:center; gap:2px;"><span>抗:</span>${resIcon}</div></div>`;
  } else {
