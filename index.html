@@ -155,7 +155,6 @@
  .inspect-btn{position:absolute;top:-5px;left:-5px;background:rgba(0,0,0,.8);color:white;border-radius:50%;width:24px;height:24px;display:flex;justify-content:center;align-items:center;z-index:20;border:1px solid #fff;font-size:12px;}
  .inspect-btn:hover{transform:scale(1.2);background:#ffcb05;color:black}
  
- /* 🌟 Buff 標籤容器，自適應字級與換行 */
  .buff-container{position:absolute;top:4px;right:4px;display:flex;gap:3px;flex-direction:column;align-items:flex-end;z-index:5;max-width:70%;}
  .item-tag{
    background:#ffcb05;color:black;padding:2px 4px;border-radius:5px;
@@ -219,13 +218,23 @@
  }
  .close-btn{position:absolute;top:10px;right:15px;font-size:24px;cursor:pointer;color:#000;font-weight:bold;}
 
- .coin-container{perspective:1000px;margin:20px auto;width:150px;height:150px;cursor:pointer;}
- .coin{width:100%;height:100%;position:relative;transform-style:preserve-3d; transition: transform 2s cubic-bezier(0.2, 0.8, 0.3, 1);}
- .coin-face{position:absolute;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:bold;box-shadow:0 0 20px rgba(0,0,0,.6); border:6px solid #333;}
- .coin-heads{background:linear-gradient(to bottom,#f44336 50%,#fff 50%);}
- .coin-heads::after{content:'';position:absolute;width:100%;height:8px;background:#333;top:50%;transform:translateY(-50%)}
- .coin-heads::before{content:'';position:absolute;width:36px;height:36px;background:#fff;border:6px solid #333;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2}
- .coin-tails{background:#333;color:#fff;transform:rotateY(180deg);border-color:#888;}
+ /* 🪙 放大版精靈球硬幣與自適應旋轉樣式 */
+ #coins-row-wrapper {
+   display: flex; gap: 35px; justify-content: center; align-items: center; margin: 30px 0 20px 0; perspective: 1200px;
+ }
+ .coin-container{ width:155px; height:155px; cursor:pointer; }
+ .coin-container.single-coin { width: 175px; height: 175px; }
+ .coin{ width:100%; height:100%; position:relative; transform-style:preserve-3d; transition: transform 2s cubic-bezier(0.2, 0.8, 0.3, 1); }
+ .coin-face{ position:absolute; width:100%; height:100%; border-radius:50%; backface-visibility:hidden; display:flex; align-items:center; justify-content:center; font-size:46px; font-weight:900; box-shadow:0 10px 25px rgba(0,0,0,.7); border:8px solid #222; }
+ .coin-heads{ background:linear-gradient(to bottom,#f44336 50%,#fff 50%); }
+ .coin-heads::after{ content:''; position:absolute; width:100%; height:10px; background:#222; top:50%; transform:translateY(-50%); }
+ .coin-heads::before{ content:''; position:absolute; width:44px; height:44px; background:#fff; border:8px solid #222; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2; box-shadow: 0 0 6px rgba(0,0,0,0.4); }
+ .coin-tails{ background:#2c3440; color:#fff; transform:rotateY(180deg); border-color:#888; text-shadow: 2px 2px 4px #000; }
+
+ .coin-control-btn {
+   background: #1e2638; color: #fff; border: 2px solid #ffcb05; padding: 12px 24px; border-radius: 14px; font-size: 20px; font-weight: 900; cursor: pointer; transition: 0.2s; min-width: 140px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+ }
+ .coin-control-btn:hover { background: #ffcb05; color: #000; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,203,5,0.4); }
 
  .roulette-power-modal { width: 380px; height: 380px; border-radius: 50%; background: linear-gradient(to bottom, #e3350d 0%, #e3350d 48%, #111 48%, #111 52%, #f5f5f5 52%, #f5f5f5 100%); box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset -10px -20px 40px rgba(0,0,0,0.3), inset 10px 20px 40px rgba(255,255,255,0.4); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #111; }
  .roulette-power-center { width: 170px; height: 170px; background: #2a2a2a; border-radius: 50%; border: 12px solid #1a1a1a; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.9); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
@@ -246,7 +255,6 @@
  .roulette-item-btn:disabled { filter: grayscale(100%); cursor: not-allowed; transform: scale(1); }
  .roulette-item-btn-icon { width: 16px; height: 16px; background: #e53935; border-radius: 50%; border: 2px solid #fff; }
 
- /* 🎬 進化專屬全螢幕特寫 (Cut-in) */
  #cutin-container {
    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
    pointer-events: none; z-index: 30000; display: none; align-items: center; justify-content: center; overflow: hidden;
@@ -398,24 +406,19 @@
  </div>
  </div>
 
+ <!-- 🪙 全新大尺寸多硬幣並排同步旋轉 Modal (無圖示亂碼、無多餘紅色按鈕) -->
  <div id="coin-modal" class="game-modal">
- <div class="modal-box" style="max-width: 650px; padding: 50px;">
- <h2 style="color:#f4d23c; font-size:36px;">🪙 判定中...</h2>
- <p id="coin-desc" style="font-size: 24px; margin: 20px 0; line-height: 1.5;"></p>
- <div id="digital-coin-area" style="margin: 30px 0; display: flex; flex-direction: column; align-items: center;">
- <div class="coin-container" id="auto-coin" onclick="autoFlipCoin()">
- <div class="coin" id="coin-inner">
- <div class="coin-face coin-heads"></div>
- <div class="coin-face coin-tails">反</div>
- </div>
- </div>
- <div style="font-size: 16px; color: #aaa; margin-top:30px;">(點擊精靈球由電腦代擲)</div>
- </div>
- <div style="display: flex; gap: 40px; justify-content: center; margin-top: 30px;">
- <button class="btn" style="background:var(--team1-color); color:white; width:150px; font-size:24px; padding:15px;" onclick="resolveCoinFlip(true)">正面</button>
- <button class="btn" style="background:var(--team2-color); color:white; width:150px; font-size:24px; padding:15px;" onclick="resolveCoinFlip(false)">反面</button>
- </div>
- </div>
+  <div class="modal-box" style="max-width: 820px; padding: 40px 30px;">
+   <h2 style="color:#ffcb05; font-size:38px; font-weight:900; letter-spacing: 2px;">COIN FLIP</h2>
+   <p id="coin-desc" style="font-size: 22px; font-weight:bold; color:#fff; margin: 15px 0; line-height: 1.5;"></p>
+   
+   <div id="digital-coin-area" style="margin: 20px 0; display: flex; flex-direction: column; align-items: center;">
+    <div id="coins-row-wrapper"></div>
+    <div id="coin-hint-text" style="font-size: 16px; color: #ffcb05; margin-top: 15px; font-weight:bold;">(Click any coin to flip)</div>
+   </div>
+
+   <div id="coin-manual-btns" style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 25px;"></div>
+  </div>
  </div>
 
  <div id="roulette-modal" class="game-modal" style="background: rgba(0,0,0,0.85);">
@@ -481,7 +484,7 @@
 
  window.state = {
  quizMode: 'manual', questions: [], csvQuestions: [], qIdx: 0, currentTeam: 1, step: 'quiz', selectedHandItem: null, hasAttachedEnergyThisTurn: false,
- pendingAttack: null, pendingCatcherTarget: null, eotFlips: [], coinFlipReason: '', coinFlipsQueue: 0, coinFlipsResults: 0, transformingPokemon: null, isAttacking: false, redrawsLeft: 5, nextTurnTeam: null,
+ pendingAttack: null, pendingCatcherTarget: null, eotFlips: [], coinFlipReason: '', coinFlipsQueue: 0, coinFlipsResults: 0, currentFlipCount: 1, isFlippingCoins: false, transformingPokemon: null, isAttacking: false, redrawsLeft: 5, nextTurnTeam: null,
  teams: { 1: { pokemon: [], activeIdx: 0, hand: [], lostLives: 0, wrongAnswers: [], usedDynamax: false, usedMega: false }, 2: { pokemon: [], activeIdx: 0, hand: [], lostLives: 0, wrongAnswers: [], usedDynamax: false, usedMega: false } },
  coinStreak: { result: null, count: 0 },
  rouletteState: { type: null, targetIdx: null, interval: null, currentVal: null, pool: [] }
@@ -654,7 +657,6 @@ if(p.currHp > oldHp) window.showHeal(p.uid, p.currHp - oldHp);
  log.text += ` 💚 聖光發動！我方全體恢復 HP！`; 
 },
 
- // 🌟 補上巨牙鯊專屬 red_hp_burst_30 紅血傷害+30
  'red_hp_burst_30': (attacker, defender, log, coinResult, baseDmg) => { 
    if ((attacker.currHp / attacker.hp) < 0.3) { 
      log.text += ` (💥紅血爆發，傷害+30！)`; 
@@ -1078,7 +1080,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
      p.isDead = true; 
      window.state.teams[teamNum].lostLives++; 
      window.addLog(`💀 ${p.name} 氣絕！`); 
-     if (window.checkGameOver()) return; // 🌟 補強：狙擊陣亡即刻判定勝負
+     if (window.checkGameOver()) return;
    }
    window.state.step = 'finished'; window.state.pendingAttack = null; window.render();
    if(window.checkGameOver()) return;
@@ -1264,10 +1266,9 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  };
  window.addLog(`🎲 神秘置換！${oldP.name} 換成了 ${newP.name}！`);
  } else if(card.id === 'pokemon_catcher') {
- window.state.pendingCatcherTarget = targetIdx; window.state.coinFlipReason = 'catcher';
- document.getElementById('coin-desc').innerHTML = `請擲硬幣：<br>正面則強制對手替換。`;
- const coinInner = document.getElementById('coin-inner'); if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = 'rotateY(0deg)'; }
- document.getElementById('coin-modal').style.display = 'flex'; return; 
+ window.state.pendingCatcherTarget = targetIdx;
+ window.setupCoinsModal(1, 'catcher', '使用捕捉器：<br>若擲出正面，強制對手替換後備寶可夢！');
+ return; 
  } else if(card.id === 'potion' || card.id === 'super_potion') {
  const p = myTeam.pokemon[targetIdx]; if(p.currHp === p.hp) return window.showAlert("HP 已滿！");
  const heal = card.id === 'potion' ? 30 : 50; 
@@ -1401,10 +1402,8 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  window.state.isAttacking = true; window.state.pendingAttack = { attacker, atk, atkIdx, enemyTeamNum: window.state.currentTeam === 1 ? 2 : 1 };
 
  if (attacker.status.confused) {
- window.state.coinFlipReason = 'confusion';
- document.getElementById('coin-desc').innerHTML = `<b>${attacker.name}</b> 處於💫混亂狀態！<br>請擲硬幣，反面將自傷 30 點！`;
- const coinInner = document.getElementById('coin-inner'); if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = 'rotateY(0deg)'; }
- document.getElementById('coin-modal').style.display = 'flex'; return;
+   window.setupCoinsModal(1, 'confusion', `<b>${attacker.name}</b> 處於💫混亂狀態！<br>若擲出反面，將受到 30 點自傷！`);
+   return;
  }
  window.continueAttack();
  } catch (e) { window.state.isAttacking = false; window.showAlert("系統錯誤: " + e.message); console.error(e); }
@@ -1413,77 +1412,195 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
  window.continueAttack = function() {
  const atk = window.state.pendingAttack.atk;
  if (atk.special && typeof atk.special === 'string' && atk.special.includes('flip') && !atk.special.startsWith('flip_')) {
- window.state.coinFlipReason = 'attack'; let desc = '發動招式附加效果：<br>';
- const flipDescMap = {
- 'paralyze_flip': '若為正面，對手麻痺！', 'poison_flip': '若為正面，對手中毒！', 'burn_flip': '若為正面，對手灼傷！',
- 'confuse_flip': '若為正面，對手混亂！', 'immune_next_flip': '若為正面，下回合免傷！', 'reduce_dmg_taken_flip': '若為正面，下回合受傷減輕！',
- 'reduce_dmg_taken_flip_30': '若為正面，下回受傷-30！', 'dmg_flip': '必須正面才能造成傷害！', 'discard_enemy_energy_flip': '若為正面，丟棄對手能量！',
- 'asleep_flip': '若為正面，對手睡眠！', 'confuse_self_flip': '若為反面，自己混亂！'
- };
- if (atk.special.includes('damage_flip')) desc += '若為正面，造成額外傷害！';
- else if (flipDescMap[atk.special]) desc += flipDescMap[atk.special];
- else desc += '依據硬幣結果觸發效果！';
+   let desc = '發動招式附加效果：<br>';
+   const flipDescMap = {
+     'paralyze_flip': '若為正面，對手麻痺！', 'poison_flip': '若為正面，對手中毒！', 'burn_flip': '若為正面，對手灼傷！',
+     'confuse_flip': '若為正面，對手混亂！', 'immune_next_flip': '若為正面，下回合免傷！', 'reduce_dmg_taken_flip': '若為正面，下回合受傷減輕！',
+     'reduce_dmg_taken_flip_30': '若為正面，下回受傷-30！', 'dmg_flip': '必須擲出正面才能造成傷害！', 'discard_enemy_energy_flip': '若為正面，丟棄對手能量！',
+     'asleep_flip': '若為正面，對手睡眠！', 'confuse_self_flip': '若為反面，自己陷入混亂！'
+   };
+   if (atk.special.includes('damage_flip')) desc += '若為正面，造成額外傷害！';
+   else if (flipDescMap[atk.special]) desc += flipDescMap[atk.special];
+   else desc += '依據硬幣結果觸發效果！';
 
- document.getElementById('coin-desc').innerHTML = desc; const coinInner = document.getElementById('coin-inner'); if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = 'rotateY(0deg)'; }
- document.getElementById('coin-modal').style.display = 'flex';
- } else if (atk.special === 'flip_3_x20' || atk.special === 'flip_3_x30') { window.state.coinFlipsQueue = 3; window.state.coinFlipsResults = 0; window.promptMultiFlip(); } 
- else if (atk.special === 'flip_2_x20' || atk.special === 'flip_2_x30') { window.state.coinFlipsQueue = 2; window.state.coinFlipsResults = 0; window.promptMultiFlip(); } 
- else { window.resolveAttack(null); }
- };
-
- window.promptMultiFlip = function() {
- if (window.state.coinFlipsQueue > 0) {
- window.state.coinFlipReason = 'multi_attack'; document.getElementById('coin-desc').innerHTML = `連續擲硬幣！<br>剩餘 <b>${window.state.coinFlipsQueue}</b> 次機會：`;
- const coinInner = document.getElementById('coin-inner'); if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = 'rotateY(0deg)'; }
- document.getElementById('coin-modal').style.display = 'flex';
- } else { window.resolveAttack(window.state.coinFlipsResults); }
+   window.setupCoinsModal(1, 'attack', desc);
+ } else if (atk.special === 'flip_3_x20' || atk.special === 'flip_3_x30') {
+   const baseMult = atk.special === 'flip_3_x20' ? 20 : 30;
+   window.setupCoinsModal(3, 'multi_attack', `連續擲 3 次硬幣！<br>每次正面造成 ${baseMult} 點傷害`);
+ } else if (atk.special === 'flip_2_x20' || atk.special === 'flip_2_x30') {
+   const baseMult = atk.special === 'flip_2_x20' ? 20 : 30;
+   window.setupCoinsModal(2, 'multi_attack', `連續擲 2 次硬幣！<br>每次正面造成 ${baseMult} 點傷害`);
+ } else { 
+   window.resolveAttack(null); 
+ }
  };
 
- window.autoFlipCoin = function() {
- const coinBtn = document.getElementById('auto-coin'); if (coinBtn && coinBtn.classList.contains('flipping')) return;
- if(coinBtn) coinBtn.classList.add('flipping'); const coinInner = document.getElementById('coin-inner'); 
+ // 🪙 建立並渲染動態硬幣彈窗 (支援 1~3 顆放大並排同時拋擲)
+ window.setupCoinsModal = function(count, reason, descText) {
+   window.state.currentFlipCount = count;
+   window.state.coinFlipReason = reason;
+   window.state.isFlippingCoins = false;
 
- let chance = 0.5;
- if (window.state.coinStreak.count >= 2) {
- chance = window.state.coinStreak.result === true ? 0.15 : 0.85;
- }
- const isHeads = Math.random() < chance;
- 
- const spins = 5; const deg = spins * 360 + (isHeads ? 0 : 180);
- if(coinInner) { coinInner.style.transition = 'transform 2s cubic-bezier(0.2, 0.8, 0.3, 1)'; coinInner.style.transform = `rotateY(${deg}deg)`; }
- setTimeout(() => { if(coinBtn) coinBtn.classList.remove('flipping'); window.resolveCoinFlip(isHeads); setTimeout(() => { if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = `rotateY(0deg)`; } }, 500); }, 2100);
+   document.getElementById('coin-desc').innerHTML = descText;
+   const wrapper = document.getElementById('coins-row-wrapper');
+   wrapper.innerHTML = '';
+
+   const isSingle = (count === 1);
+   for(let i=0; i<count; i++) {
+     wrapper.innerHTML += `
+       <div class="coin-container ${isSingle ? 'single-coin' : ''}" onclick="autoFlipAllCoins()">
+         <div class="coin" id="coin-slot-${i}">
+           <div class="coin-face coin-heads"></div>
+           <div class="coin-face coin-tails">反</div>
+         </div>
+       </div>
+     `;
+   }
+
+   const hintEl = document.getElementById('coin-hint-text');
+   if (hintEl) {
+     hintEl.textContent = isSingle ? '(Click coin to flip)' : '(Click any coin to flip)';
+   }
+
+   const btnBox = document.getElementById('coin-manual-btns');
+   btnBox.innerHTML = '';
+
+   if (count === 1) {
+     btnBox.innerHTML = `
+       <button class="coin-control-btn" style="background:var(--team1-color);" onclick="resolveManualCoins(1)">HEADS</button>
+       <button class="coin-control-btn" style="background:var(--team2-color);" onclick="resolveManualCoins(0)">TAILS</button>
+     `;
+   } else if (count === 2) {
+     btnBox.innerHTML = `
+       <button class="coin-control-btn" style="background:var(--team2-color);" onclick="resolveManualCoins(0)">0 HEADS</button>
+       <button class="coin-control-btn" style="background:#555;" onclick="resolveManualCoins(1)">1 HEAD</button>
+       <button class="coin-control-btn" style="background:var(--team1-color);" onclick="resolveManualCoins(2)">2 HEADS</button>
+     `;
+   } else if (count === 3) {
+     btnBox.innerHTML = `
+       <button class="coin-control-btn" style="background:var(--team2-color);" onclick="resolveManualCoins(0)">0 HEADS</button>
+       <button class="coin-control-btn" style="background:#555;" onclick="resolveManualCoins(1)">1 HEAD</button>
+       <button class="coin-control-btn" style="background:#6c5ce7;" onclick="resolveManualCoins(2)">2 HEADS</button>
+       <button class="coin-control-btn" style="background:var(--team1-color);" onclick="resolveManualCoins(3)">3 HEADS</button>
+     `;
+   }
+
+   document.getElementById('coin-modal').style.display = 'flex';
  };
 
- window.resolveCoinFlip = function(isHeads) {
- document.getElementById('coin-modal').style.display = 'none'; const reason = window.state.coinFlipReason;
- 
- if (isHeads === window.state.coinStreak.result) {
- window.state.coinStreak.count++;
- } else {
- window.state.coinStreak.result = isHeads;
- window.state.coinStreak.count = 1;
- }
+ // 🪙 一鍵同時拋擲全部硬幣 (點擊任一硬幣即可觸發)
+ window.autoFlipAllCoins = function() {
+   if (window.state.isFlippingCoins) return;
+   window.state.isFlippingCoins = true;
 
- if (reason === 'confusion') {
- if (isHeads) { window.addLog(`💫 克服混亂！`); window.continueAttack(); } 
- else {
- window.addLog(`💫 混亂發作，自傷 30 點。`); const attacker = window.state.pendingAttack.attacker; attacker.currHp = Math.max(0, attacker.currHp - 30); window.showDamage(attacker.uid, 30);
- if (attacker.currHp <= 0 && !attacker.isDead) { attacker.isDead = true; window.state.teams[window.state.currentTeam].lostLives++; window.addLog(`💀 ${attacker.name} 氣絕！`); if(window.checkGameOver()) return; }
- window.state.step = 'finished'; window.state.selectedHandItem = null; window.state.isAttacking = false; window.render(); setTimeout(window.processEndOfTurn, 1500);
- }
- } else if (reason === 'catcher') {
- const enemyTeamNum = window.state.currentTeam === 1 ? 2 : 1; const enemyTeam = window.state.teams[enemyTeamNum];
- if (isHeads) { window.addLog(`🪤 強制對手換上 ${enemyTeam.pokemon[window.state.pendingCatcherTarget].name}。`); window.retreatToBench(enemyTeam, window.state.pendingCatcherTarget); } else { window.addLog(`🪤 捕捉器失效。`); }
- if (window.state.selectedHandItem) { window.state.teams[window.state.currentTeam].hand.splice(window.state.selectedHandItem.index, 1); }
- window.state.selectedHandItem = null; window.updateHint("訓練家卡使用完畢。"); window.render();
- } else if (reason === 'attack') { window.resolveAttack(isHeads); } 
- else if (reason === 'multi_attack') { if(isHeads) window.state.coinFlipsResults++; window.state.coinFlipsQueue--; window.promptMultiFlip(); } 
- else if (reason === 'burn' || reason === 'asleep') {
- const flip = window.state.eotFlips.shift(); const p = window.state.teams[flip.team].pokemon[flip.pIdx];
- if (isHeads) { if (reason === 'burn') { p.status.burn = false; window.addLog(`🔥 解除灼傷。`); } if (reason === 'asleep') { p.status.asleep = false; window.addLog(`💤 醒來了。`); } } 
- else { if (reason === 'burn') window.addLog(`🔥 持續灼傷。`); if (reason === 'asleep') window.addLog(`💤 繼續熟睡。`); }
- window.render(); setTimeout(window.processNextEotFlip, 800);
- }
+   const count = window.state.currentFlipCount;
+   let headsResults = 0;
+   const results = [];
+
+   for(let i=0; i<count; i++) {
+     let chance = 0.5;
+     if (window.state.coinStreak.count >= 2) {
+       chance = window.state.coinStreak.result === true ? 0.2 : 0.8;
+     }
+     const isHeads = Math.random() < chance;
+     if (isHeads) headsResults++;
+     results.push(isHeads);
+   }
+
+   // 記錄連勝連負統計
+   const dominantResult = (headsResults > count / 2);
+   if (dominantResult === window.state.coinStreak.result) {
+     window.state.coinStreak.count++;
+   } else {
+     window.state.coinStreak.result = dominantResult;
+     window.state.coinStreak.count = 1;
+   }
+
+   // 執行同步拋擲動畫 (帶有微幅角度與轉速變化更顯生動)
+   for(let i=0; i<count; i++) {
+     const coin = document.getElementById(`coin-slot-${i}`);
+     if (coin) {
+       const spins = 5 + Math.floor(Math.random() * 2);
+       const deg = spins * 360 + (results[i] ? 0 : 180);
+       coin.style.transition = 'transform 2s cubic-bezier(0.2, 0.8, 0.3, 1)';
+       coin.style.transform = `rotateY(${deg}deg)`;
+     }
+   }
+
+   setTimeout(() => {
+     window.state.isFlippingCoins = false;
+     window.finishCoinResolution(count === 1 ? results[0] : headsResults);
+   }, 2200);
+ };
+
+ window.resolveManualCoins = function(headsCount) {
+   if (window.state.isFlippingCoins) return;
+   const count = window.state.currentFlipCount;
+   window.finishCoinResolution(count === 1 ? (headsCount === 1) : headsCount);
+ };
+
+ window.finishCoinResolution = function(resultValue) {
+   setTimeout(() => {
+     document.getElementById('coin-modal').style.display = 'none';
+     const reason = window.state.coinFlipReason;
+
+     if (reason === 'confusion') {
+       const isHeads = resultValue === true;
+       if (isHeads) { 
+         window.addLog(`💫 克服混亂！(HEADS)`); 
+         window.continueAttack(); 
+       } else {
+         window.addLog(`💫 混亂發作，自傷 30 點。(TAILS)`); 
+         const attacker = window.state.pendingAttack.attacker; 
+         attacker.currHp = Math.max(0, attacker.currHp - 30); 
+         window.showDamage(attacker.uid, 30);
+         if (attacker.currHp <= 0 && !attacker.isDead) { 
+           attacker.isDead = true; 
+           window.state.teams[window.state.currentTeam].lostLives++; 
+           window.addLog(`💀 ${attacker.name} 氣絕！`); 
+           if(window.checkGameOver()) return; 
+         }
+         window.state.step = 'finished'; 
+         window.state.selectedHandItem = null; 
+         window.state.isAttacking = false; 
+         window.render(); 
+         setTimeout(window.processEndOfTurn, 1500);
+       }
+     } else if (reason === 'catcher') {
+       const isHeads = resultValue === true;
+       const enemyTeamNum = window.state.currentTeam === 1 ? 2 : 1; 
+       const enemyTeam = window.state.teams[enemyTeamNum];
+       if (isHeads) { 
+         window.addLog(`🪤 (HEADS) 強制對手換上 ${enemyTeam.pokemon[window.state.pendingCatcherTarget].name}。`); 
+         window.retreatToBench(enemyTeam, window.state.pendingCatcherTarget); 
+       } else { 
+         window.addLog(`🪤 (TAILS) 捕捉器失效。`); 
+       }
+       if (window.state.selectedHandItem) { 
+         window.state.teams[window.state.currentTeam].hand.splice(window.state.selectedHandItem.index, 1); 
+       }
+       window.state.selectedHandItem = null; 
+       window.updateHint("訓練家卡使用完畢。"); 
+       window.render();
+     } else if (reason === 'attack') {
+       window.resolveAttack(resultValue);
+     } else if (reason === 'multi_attack') {
+       window.resolveAttack(resultValue);
+     } else if (reason === 'burn' || reason === 'asleep') {
+       const isHeads = resultValue === true;
+       const flip = window.state.eotFlips.shift(); 
+       const p = window.state.teams[flip.team].pokemon[flip.pIdx];
+       if (isHeads) { 
+         if (reason === 'burn') { p.status.burn = false; window.addLog(`🔥 (HEADS) 解除灼傷。`); } 
+         if (reason === 'asleep') { p.status.asleep = false; window.addLog(`💤 (HEADS) 醒來了。`); } 
+       } else { 
+         if (reason === 'burn') window.addLog(`🔥 (TAILS) 持續灼傷。`); 
+         if (reason === 'asleep') window.addLog(`💤 (TAILS) 繼續熟睡。`); 
+       }
+       window.render(); 
+       setTimeout(window.processNextEotFlip, 800);
+     }
+   }, 300);
  };
 
  window.resolveAttack = function(coinResult) {
@@ -1590,7 +1707,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
    onHit: () => {
      window.showDamage(defender.uid, dmg);
 
-     // 🛡️ 減傷護盾判定：發動減傷時，立即為發動者生成護盾
+     // 🛡️ 減傷護盾判定
      const triggeredShield = atk.special && (
        (atk.special.includes('reduce_dmg_taken') && (!atk.special.includes('flip') || coinResult === true)) ||
        (atk.special.includes('immune_next') && coinResult === true)
@@ -1603,7 +1720,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
        }, 300);
      }
      
-     // 🧪 精確判定異常狀態，排除 reduce_dmg_taken_flip_30 被誤判為混亂
+     // 🧪 異常狀態判定
      let targetStatus = null;
      if (atk.special) {
        if (atk.special === 'poison' || (atk.special === 'poison_flip' && coinResult === true)) targetStatus = 'poison';
@@ -1620,7 +1737,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
        }, 1000);
      }
 
-     // 🌟 AOE 波及傷害處理 (補強：擊倒立即觸發 checkGameOver)
+     // 🌟 AOE 波及傷害處理 (後備陣亡立即觸發 checkGameOver 防止被反殺)
      if (atk.special === 'aoe_10' || atk.special === 'aoe_20') {
        const aoeDmg = atk.special === 'aoe_10' ? 10 : 20;
        let aoeKills = 0;
@@ -1643,7 +1760,7 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
        });
        if (aoeKills > 0) {
          window.render();
-         if (window.checkGameOver()) return; // 🌟 後備陣亡達3隻直接終止比賽，防止反殺
+         if (window.checkGameOver()) return;
        }
      }
    }
@@ -1744,13 +1861,19 @@ log.text += ` (冥想發動：下回攻擊+20，且目前受傷-20)`;
 
  window.processNextEotFlip = function() {
  if (window.state.eotFlips.length > 0) {
- const flip = window.state.eotFlips[0]; const p = window.state.teams[flip.team].pokemon[flip.pIdx];
- if (p.currHp <= 0) { window.state.eotFlips.shift(); window.processNextEotFlip(); return; }
- window.state.coinFlipReason = flip.type;
- document.getElementById('coin-desc').innerHTML = flip.type === 'burn' ? `請為 <b>${p.name}</b> 的🔥灼傷恢復擲硬幣：` : `請為 <b>${p.name}</b> 的💤睡眠恢復擲硬幣：`;
- const coinInner = document.getElementById('coin-inner'); if(coinInner) { coinInner.style.transition = 'none'; coinInner.style.transform = 'rotateY(0deg)'; }
- document.getElementById('coin-modal').style.display = 'flex';
- } else { window.state.nextTurnTeam = window.state.currentTeam === 1 ? 2 : 1; window.checkEotSwaps(); }
+   const flip = window.state.eotFlips[0]; 
+   const p = window.state.teams[flip.team].pokemon[flip.pIdx];
+   if (p.currHp <= 0) { 
+     window.state.eotFlips.shift(); 
+     window.processNextEotFlip(); 
+     return; 
+   }
+   const text = flip.type === 'burn' ? `請為 <b>${p.name}</b> 的🔥灼傷恢復擲硬幣：` : `請為 <b>${p.name}</b> 的💤睡眠恢復擲硬幣：`;
+   window.setupCoinsModal(1, flip.type, text);
+ } else { 
+   window.state.nextTurnTeam = window.state.currentTeam === 1 ? 2 : 1; 
+   window.checkEotSwaps(); 
+ }
  };
 
  window.checkEotSwaps = function() {
