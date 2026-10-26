@@ -76,10 +76,96 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 .hand-energy{background:#333}
 .hand-trainer{background:linear-gradient(135deg,#eee,#aaa);color:#222}
 
-.center-panel{width:210px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px 10px; gap:10px; align-self: stretch; height: 100%; max-height: 100%; box-sizing: border-box; overflow: hidden; }
-#action-hint { color: #bbb; font-size: 13px; text-align: center; margin-bottom: 8px; min-height: 35px; line-height:1.4; flex-shrink: 0; }
-#log{flex:1; width:100%; background:rgba(0,0,0,.7); border:1px solid #333; border-radius:8px; padding:10px; font-size:14px; color:#eee; overflow-y:auto; display:flex; flex-direction:column; gap:8px; height: 0;}
-.log-entry{border-bottom:1px solid #222; padding-bottom:5px; animation:slideIn .3s ease-out; opacity:1 !important; line-height:1.4;}
+/* ========================================================
+   🏛️ 中央通道配置 (針對新版寶可球上移與長方形石座深度優化)
+   ======================================================== */
+.center-panel {
+  width: 210px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: flex-start; 
+  padding: 10px 5px; 
+  gap: 0; 
+  align-self: stretch; 
+  height: 100%; 
+  max-height: 100%; 
+  box-sizing: border-box; 
+  overflow: hidden; 
+}
+
+/* 1. 回合指示器：上移貼頂，附帶微暗漸層底色與邊框，不擋下方寶可球石雕 */
+#turn-indicator { 
+  margin: 0 0 6px 0; 
+  font-size: 15px; 
+  font-weight: 900; 
+  text-align: center; 
+  color: #ffcb05; 
+  text-shadow: 0 0 10px rgba(0,0,0,0.9), 0 2px 4px #000;
+  background: rgba(10, 14, 22, 0.7);
+  padding: 4px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 203, 5, 0.45);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+/* 2. 操作提示框：直接完全隱藏以釋放寶貴的垂直視覺空間 */
+#action-hint { 
+  display: none !important; 
+}
+
+/* 3. 結束回合按鈕：縮小頂部留白至 85px，完美重合在新版長方形石座之上 */
+#end-turn-btn {
+  margin-top: 85px !important;
+  margin-bottom: 8px !important;
+  width: 180px !important;
+  height: 44px !important;
+  line-height: 42px !important;
+  padding: 0 !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #3a4253 0%, #202634 100%) !important;
+  border: 2px solid #5a667d !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  flex-shrink: 0;
+}
+#end-turn-btn:hover {
+  filter: brightness(1.2) !important;
+  border-color: #ffcb05 !important;
+}
+
+/* 4. 戰鬥日誌框：縱向高度最大化 (自適應展開)，單一回合戰況全覽無遺 */
+#log {
+  flex: 1 !important; 
+  width: 100% !important; 
+  min-height: 380px !important;
+  background: rgba(10, 12, 18, 0.78) !important; 
+  border: 1.5px solid #334 !important; 
+  border-radius: 10px !important; 
+  padding: 8px 10px !important; 
+  font-size: 13px !important; 
+  color: #eee !important; 
+  overflow-y: auto !important; 
+  display: flex !important; 
+  flex-direction: column !important; 
+  gap: 6px !important; 
+  height: 0 !important;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.6) !important;
+}
+
+.log-entry {
+  border-bottom: 1px solid rgba(255,255,255,0.08); 
+  padding-bottom: 4px; 
+  animation: slideIn .3s ease-out; 
+  opacity: 1 !important; 
+  line-height: 1.35;
+}
 @keyframes slideIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
 
 /* ========================================================
