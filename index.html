@@ -826,7 +826,7 @@ setTimeout(() => pop.remove(), 900);
  window.addLog = function(msg) {
  const l = document.getElementById('log'); const entry = document.createElement('div'); entry.className = 'log-entry'; entry.textContent = `[系統] ${msg}`;
  l.insertBefore(entry, l.firstChild); Array.from(l.children).forEach(child => child.style.opacity = '1');
- if (l.children.length > 8) { l.removeChild(l.lastChild); }
+ if (l.children.length > 30) { l.removeChild(l.lastChild); }
  };
 
  window.getSmartEnergyType = function(team) {
