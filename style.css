@@ -3,9 +3,9 @@
   --color-fire:#dc6226;--color-water:#3a75b8;--color-grass:#4e9c3e;--color-electric:#e5b92b;--color-normal:#7a7d84;--color-brown:#8c4e28;--color-purple:#7d429a;--color-any:#eeeeee;
   
   /* 實體卡牌邊框色系：亮銀灰色 */
-  --card-border-gold: #d4d9e2;   /* 外側亮銀灰色主邊框 */
-  --card-border-inner: #525866;  /* 外圍深鋼灰立體細邊線 */
-  --card-img-silver: #cbd0d8;    /* 寶可夢插圖細銀框顏色 */
+  --card-border-gold: #d4d9e2;
+  --card-border-inner: #525866;
+  --card-img-silver: #cbd0d8;
 
   --art-bg-grass: radial-gradient(circle at 50% 30%, #204829 0%, #0d1e11 100%);
   --art-bg-fire: radial-gradient(circle at 50% 30%, #582414 0%, #240c06 100%);
@@ -38,10 +38,12 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 .start-btn-content { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .pokeball-icon { width: 28px; height: 28px; }
 
-/* 🌲 戰鬥場景底圖 */
+/* 🌲 戰鬥場景外框：純黑底色，不直接放底圖避免比例失真 */
 #battle-field { 
-  position: relative; width: 100vw; height: 100vh; 
-  background: #0b0d14 url('images/forest_battlefield.webp') center center / cover no-repeat; 
+  position: relative; 
+  width: 100vw; 
+  height: 100vh; 
+  background: #0b0d14; 
   overflow: hidden; 
 }
 #battle-field::before,
@@ -49,11 +51,23 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
   display: none !important;
 }
 
-#battle-scale-wrapper { width: 1280px; height: 720px; position: absolute; left: 50%; top: 50%; display: flex; flex-direction: column; z-index: 2; }
+/* 🌲 戰鬥主容器：固定 1280x720，底圖直接鎖定於此，確保非全螢幕也不會產生垂直裁切漂移 */
+#battle-scale-wrapper { 
+  width: 1280px; 
+  height: 720px; 
+  position: absolute; 
+  left: 50%; 
+  top: 50%; 
+  transform: translate(-50%, -50%); 
+  display: flex; 
+  flex-direction: column; 
+  z-index: 2; 
+  background: url('images/forest_battlefield.webp') center center / cover no-repeat;
+}
 
 .battle-main { flex:1; display:flex; justify-content:space-between; align-items:stretch; padding:20px 10px; gap:15px; height: 100%; max-height: 100%; box-sizing: border-box; overflow: hidden; }
 
-/* 左右隊伍容器：適度透出底層符文石板 */
+/* 左右隊伍容器 */
 .team-container { 
   width:510px; display:flex; flex-direction:column; justify-content:space-between; gap:10px; padding:20px 15px; 
   border-radius:25px; background:rgba(15, 18, 28, 0.45); backdrop-filter: blur(6px); 
@@ -77,7 +91,7 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 .hand-trainer{background:linear-gradient(135deg,#eee,#aaa);color:#222}
 
 /* ========================================================
-   🏛️ 中央通道配置 (針對新版寶可球上移與長方形石座深度優化)
+   🏛️ 中央通道 1280x720 垂直佈局正式版（維持絕對數學中線，不偏移）
    ======================================================== */
 .center-panel {
   width: 210px; 
@@ -85,68 +99,75 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
   flex-direction: column; 
   align-items: center; 
   justify-content: flex-start; 
-  padding: 10px 5px; 
+  padding: 0; 
   gap: 0; 
   align-self: stretch; 
   height: 100%; 
   max-height: 100%; 
   box-sizing: border-box; 
   overflow: hidden; 
+  position: relative;
 }
 
-/* 1. 回合指示器：上移貼頂，附帶微暗漸層底色與邊框，不擋下方寶可球石雕 */
+/* (1) 回合文字：單行膠囊樣式，緊貼最頂端，不遮擋下方寶可球 */
 #turn-indicator { 
-  margin: 0 0 6px 0; 
-  font-size: 15px; 
-  font-weight: 900; 
-  text-align: center; 
-  color: #ffcb05; 
-  text-shadow: 0 0 10px rgba(0,0,0,0.9), 0 2px 4px #000;
-  background: rgba(10, 14, 22, 0.7);
-  padding: 4px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 203, 5, 0.45);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-  z-index: 10;
-  flex-shrink: 0;
+  margin-top: 6px !important;
+  margin-bottom: 0 !important; 
+  font-size: 14px !important; 
+  font-weight: 900 !important; 
+  text-align: center !important; 
+  color: #ffcb05 !important; 
+  white-space: nowrap !important;
+  text-shadow: 0 0 8px rgba(0,0,0,0.9), 0 2px 4px #000 !important;
+  background: rgba(12, 16, 26, 0.75) !important;
+  padding: 4px 14px !important;
+  border-radius: 20px !important;
+  border: 1.5px solid rgba(255, 203, 5, 0.5) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.7) !important;
+  z-index: 10 !important;
+  flex-shrink: 0 !important;
 }
 
-/* 2. 操作提示框：直接完全隱藏以釋放寶貴的垂直視覺空間 */
 #action-hint { 
   display: none !important; 
 }
 
-/* 3. 結束回合按鈕：縮小頂部留白至 85px，完美重合在新版長方形石座之上 */
+/* (2) 結束回合按鈕：頂部留白跨越寶可球石雕，嵌合在長方形石台上 */
 #end-turn-btn {
-  margin-top: 85px !important;
-  margin-bottom: 8px !important;
-  width: 180px !important;
-  height: 44px !important;
-  line-height: 42px !important;
+  margin-top: 144px !important;
+  margin-bottom: 10px !important;
+  width: 172px !important;
+  height: 42px !important;
+  line-height: 38px !important;
   padding: 0 !important;
   font-size: 16px !important;
   font-weight: 900 !important;
-  letter-spacing: 1px !important;
-  border-radius: 8px !important;
-  background: linear-gradient(180deg, #3a4253 0%, #202634 100%) !important;
-  border: 2px solid #5a667d !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.7) !important;
+  letter-spacing: 2px !important;
   color: #fff !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(255,203,5,0.4) !important;
+  background: rgba(30, 36, 48, 0.6) !important;
+  backdrop-filter: blur(2px) !important;
+  border: 2px solid rgba(255, 203, 5, 0.7) !important;
+  border-radius: 6px !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), 0 4px 10px rgba(0,0,0,0.7) !important;
   cursor: pointer !important;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
 }
 #end-turn-btn:hover {
-  filter: brightness(1.2) !important;
+  background: rgba(255, 203, 5, 0.25) !important;
   border-color: #ffcb05 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0 16px rgba(255, 203, 5, 0.7), inset 0 0 8px rgba(255, 203, 5, 0.5) !important;
 }
 
-/* 4. 戰鬥日誌框：縱向高度最大化 (自適應展開)，單一回合戰況全覽無遺 */
+/* (3) 對戰日誌 log：下方全開，縱向延展以完整呈現戰局 */
 #log {
   flex: 1 !important; 
   width: 100% !important; 
-  min-height: 380px !important;
-  background: rgba(10, 12, 18, 0.78) !important; 
-  border: 1.5px solid #334 !important; 
+  min-height: 430px !important;
+  background: rgba(10, 12, 18, 0.8) !important; 
+  border: 1.5px solid rgba(255,255,255,0.12) !important; 
   border-radius: 10px !important; 
   padding: 8px 10px !important; 
   font-size: 13px !important; 
@@ -156,7 +177,7 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
   flex-direction: column !important; 
   gap: 6px !important; 
   height: 0 !important;
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.6) !important;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.7) !important;
 }
 
 .log-entry {
@@ -169,12 +190,11 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 @keyframes slideIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
 
 /* ========================================================
-   🎴 實體卡牌質感樣式 (亮銀灰厚外框 + 實體卡倒角 + 七彩彩虹雷射反光)
+   🎴 實體卡牌邊框與反光
    ======================================================== */
 .card {
   flex-shrink:0; border-radius:10px; color:#1a1a1a; padding:6px; font-size:12px;
   position:relative; 
-  /* 實體卡外圈的亮銀灰立體邊框 */
   border: 3.5px solid var(--card-border-gold);
   box-shadow: 
     0 0 0 1px var(--card-border-inner),
@@ -183,14 +203,10 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
   display:flex; flex-direction:column; overflow:hidden; transform-style: preserve-3d;
   transition: transform 0.12s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-
-/* 確保卡片內所有文字與內容浮在彩虹反光圖層上方，維持文字銳利清晰 */
 .card > * {
   position: relative;
   z-index: 2;
 }
-
-/* 🌈 華麗版七彩全像雷射反光 (Holo Rainbow Foil) - 位於文字下方 z-index: 1 */
 .card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; 
   z-index: 1;
@@ -218,7 +234,6 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 .card-bench .card-img{height:70px}
 .card-bench .attack-row{padding:3px;font-size:10px;margin-top:3px}
 
-/* 各屬性卡面磨砂紙質底色 */
 .card.type-fire{
   background: radial-gradient(ellipse at 50% 15%, rgba(255, 225, 185, 0.6) 0%, transparent 70%),
               linear-gradient(180deg, #f08342 0%, #dc6226 60%, #c44e18 100%);
@@ -268,7 +283,6 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 .bench-header .name-text { font-size:12px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
 .bench-header .hp-text { font-size:11px; font-weight:900; }
 
-/* 🖼️ 精緻細銀插圖外框 (1.5px) */
 .card-img{
   width:100%; border-radius:5px; display:flex; align-items:center; justify-content:center;
   overflow:hidden; 
@@ -366,7 +380,6 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 }
 .close-btn{position:absolute;top:10px;right:15px;font-size:24px;cursor:pointer;color:#000;font-weight:bold;}
 
-/* 🪙 放大版精靈球硬幣與自適應旋轉樣式 */
 #coins-row-wrapper {
   display: flex; gap: 35px; justify-content: center; align-items: center; margin: 30px 0 20px 0; perspective: 1200px;
 }
@@ -424,7 +437,6 @@ body{background:#0b0d14;color:#fff;width:100vw;height:100vh;overflow:hidden;disp
 @keyframes cutinMonSlide { 0% { transform: translateX(-70vw) scale(0.6) rotate(-10deg); opacity: 0; } 20% { transform: translateX(0) scale(1.1) rotate(0deg); opacity: 1; } 80% { transform: translateX(20px) scale(1.15) rotate(0deg); opacity: 1; } 100% { transform: translateX(70vw) scale(1.3) rotate(10deg); opacity: 0; } }
 @keyframes cutinTextSlide { 0% { transform: translateX(70vw); opacity: 0; } 25% { transform: translateX(0); opacity: 1; } 75% { transform: translateX(-20px); opacity: 1; } 100% { transform: translateX(-70vw); opacity: 0; } }
 
-/* 🎮 3D 模組容器樣式 (放大鏡檢視專用) */
 model-viewer.pokemon-3d-view {
   width: 100%;
   height: 100%;
